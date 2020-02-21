@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 
+import PubSub from 'pubsub-js'
+
 class FormularioSeries extends Component {
 
     constructor(){
@@ -11,6 +13,10 @@ class FormularioSeries extends Component {
             sinopse: ''
         }
         this.state = this.stateInicial
+
+        PubSub.subscribe('editimg', (msg, serie) => {
+            this.setState(serie)
+        })
     }
 
     inputHandler = (e) => {

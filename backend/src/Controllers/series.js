@@ -11,6 +11,7 @@ module.exports = {
     async listar(req, res){
         const lista = await seriesDao.lista();
 
+
         if(lista)
             return res.send(lista);
 

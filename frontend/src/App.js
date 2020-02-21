@@ -1,20 +1,19 @@
 import React, { Component } from 'react';
+
+// import {BrowserRouter as Router, Switch, Route } from 'react-router-dom'
 // import logo from './logo.svg';
 import './App.css';
 // import { render } from '@testing-library/react';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import BoxSeries from './components/series/Box_series';
-import Navbar from './components/Nav_bar'
+import 'bootstrap/dist/js/bootstrap.min.js'
 
+import Routes from './routes/Routes'
 
 class App extends Component {
-
+  
   render(){
     return( 
-      <div>
-        <Navbar/>
-        <BoxSeries/>
-      </div>
+      <Routes/>
     )
   }
 }
@@ -22,7 +21,7 @@ class App extends Component {
 export default App;
 
 // //componente do react
-{/* <div className="App"> */}
+/* <div className="App"> */
 
 /* <header className="App-header">
          <img src={logo} className="App-logo" alt="logo" />

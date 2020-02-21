@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import TabelaSeries from './Tabela_series';
 import FormularioSeries from './Formulario_series';
+import { getToken } from '../../services/Auth_service'
+import { listar, inserir, atualizar, remove } from '../../services/Series_service'
 
 class BoxSeries extends Component {
 
@@ -13,10 +15,14 @@ class BoxSeries extends Component {
     }
 
   async componentDidMount(){
-    let resposta = await fetch('http://localhost:3000/series') 
-    const series = await resposta.json()
-    console.log(series)
-    this.setState({series: series})
+    try{
+      const resposta = await listar()
+      const series = await resposta.json()
+      // console.log(series)
+      this.setState({series: series})
+    }catch(error){
+      console.log(error)
+    }
     
     //TESTE
     // console.log('Já estou pronto')
@@ -25,43 +31,42 @@ class BoxSeries extends Component {
   }
 
   enviaDados = async (serie) => {
-      console.log('enviando dados....')
-      console.log(serie)
-      const params = {
-          method: 'POST',
-          headers: {
-            Accept: 'application/json',
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(serie)
+    try {
+      let retorno = ''
+      // se ele tiver um id ele vai atualizar e se não uma serie sera cadastrada
+      if(serie.id) retorno = await atualizar(serie)
+      else retorno = await inserir(serie)
+      if (retorno.status === 201) {
+        return this.setState({
+          series: [...this.state.series, serie],
+          serie: this.novaSerie
+        })
       }
-      try{
-          const retorno = await fetch('http://localhost:3000/series', params);
-          if(retorno.status === 201){
-              console.log('enviada com sucesso')
-              serie = retorno.json()
-              this.setState({series: [...this.state.series, serie]})
-          }
-      }catch(erro){
-          console.log(erro)
+      if (retorno.status === 200) {
+        this.setState({
+          series: this.state.series.map(s => s.id == serie.id ? serie : s),
+          serie: this.novaSerie
+        })
       }
+
+    } catch (erro) {
+      console.log(erro)
+    }
+
   }
 
-    deleta = async (id) => {
-        const seriesAtual = this.state.series
-        const params = {
-            method: 'DELETE',
-        }
-        const retorno = await 
-            fetch('http://localhost:3000/series/' + id,params)
-        if(retorno.status === 204){
-            this.setState({
-                series: seriesAtual.filter((serie) => {
-                    return serie.id !== id
-                })
-            })
-        }
+
+  deleta = async (id) => {
+    const seriesAtual = this.state.series
+    const retorno = await remove(id)
+    if (retorno.status === 204) {
+      this.setState({
+        series: seriesAtual.filter((serie) => {
+          return serie.id !== id
+        })
+      })
     }
+  }
     
     render() {
         return (
